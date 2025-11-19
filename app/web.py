@@ -114,5 +114,75 @@ def dashboard():
     return render_template("dashboard.html", user=user, urls=urls)
 
 
+@app.route("/add_url", methods=["POST"])
+def add_url():
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    url = request.form.get("url")
+
+    if not url:
+        flash("URL is required", "error")
+        return redirect(url_for("dashboard"))
+
+    # Basic URL validation
+    if not url.startswith(("http://", "https://")):
+        flash("URL must start with http:// or https://", "error")
+        return redirect(url_for("dashboard"))
+
+    db = get_db()
+
+    # Check if URL already exists for this user
+    existing_url = db.query(MonitoredURL).filter(
+        MonitoredURL.user_id == session["user_id"],
+        MonitoredURL.url == url,
+        MonitoredURL.is_active == True
+    ).first()
+
+    if existing_url:
+        flash("This URL is already being monitored", "error")
+        db.close()
+        return redirect(url_for("dashboard"))
+
+    # Add new URL
+    new_url = MonitoredURL(
+        url=url,
+        user_id=session["user_id"]
+    )
+    db.add(new_url)
+    db.commit()
+    db.close()
+
+    flash(f"Started monitoring {url}", "success")
+    return redirect(url_for("dashboard"))
+
+
+@app.route("/remove_url/<int:url_id>", methods=["POST"])
+def remove_url(url_id):
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    db = get_db()
+
+    # Find the URL and verify it belongs to the current user
+    monitored_url = db.query(MonitoredURL).filter(
+        MonitoredURL.id == url_id,
+        MonitoredURL.user_id == session["user_id"]
+    ).first()
+
+    if not monitored_url:
+        flash("URL not found", "error")
+        db.close()
+        return redirect(url_for("dashboard"))
+
+    # Mark as inactive instead of deleting (preserves historical data)
+    monitored_url.is_active = False
+    db.commit()
+    db.close()
+
+    flash(f"Stopped monitoring {monitored_url.url}", "success")
+    return redirect(url_for("dashboard"))
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)

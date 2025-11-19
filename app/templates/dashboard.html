@@ -5,7 +5,21 @@
 {% block content %}
 <h2>Your Monitored URLs</h2>
 
-<div class="card" style="margin-top: 20px;">
+<div class="card" style="margin-top: 20px; margin-bottom: 30px;">
+    <h3 style="margin-bottom: 20px;">Add New URL</h3>
+    <form method="POST" action="{{ url_for('add_url') }}" style="display: flex; gap: 10px;">
+        <input
+            type="url"
+            name="url"
+            placeholder="https://example.com"
+            required
+            style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;"
+        >
+        <button type="submit" class="btn btn-primary">Add URL</button>
+    </form>
+</div>
+
+<div class="card">
     {% if urls %}
         <table style="width: 100%; border-collapse: collapse;">
             <thead>
@@ -13,6 +27,7 @@
                     <th style="padding: 10px; text-align: left;">URL</th>
                     <th style="padding: 10px; text-align: left;">Added</th>
                     <th style="padding: 10px; text-align: left;">Status</th>
+                    <th style="padding: 10px; text-align: left;">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -21,7 +36,18 @@
                     <td style="padding: 10px;">{{ url.url }}</td>
                     <td style="padding: 10px;">{{ url.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
                     <td style="padding: 10px;">
-                        <span style="color: #27ae60;">Active</span>
+                        <span style="color: #27ae60; font-weight: 500;">Active</span>
+                    </td>
+                    <td style="padding: 10px;">
+                        <form method="POST" action="{{ url_for('remove_url', url_id=url.id) }}" style="display: inline;">
+                            <button
+                                type="submit"
+                                class="btn btn-danger"
+                                onclick="return confirm('Stop monitoring {{ url.url }}?');"
+                            >
+                                Remove
+                            </button>
+                        </form>
                     </td>
                 </tr>
                 {% endfor %}
@@ -29,12 +55,16 @@
         </table>
     {% else %}
         <p style="text-align: center; color: #7f8c8d; padding: 40px;">
-            No URLs being monitored yet. Add one to get started!
+            No URLs being monitored yet. Add one above to get started!
         </p>
     {% endif %}
 </div>
 
-<p class="text-center mt-20" style="color: #7f8c8d;">
-    URL management coming in next step...
-</p>
+<div class="card" style="margin-top: 20px; background: #ecf0f1;">
+    <p style="margin-bottom: 10px;"><strong>View your metrics in Grafana:</strong></p>
+    <p style="margin-bottom: 0;">
+        <a href="http://localhost:3000" target="_blank" style="color: #3498db;">Open Grafana Dashboard</a>
+        (login: admin/admin)
+    </p>
+</div>
 {% endblock %}
