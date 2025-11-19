@@ -3,13 +3,32 @@
 version: '3.8'
 
 services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    container_name: uptime-monitor-web
+    environment:
+      - DATABASE_URL=sqlite:////data/uptime_monitor.db
+      - SECRET_KEY=change-this-in-production
+    volumes:
+      - db-data:/data
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
+
   monitor:
     build: .
     container_name: uptime-monitor-app
+    environment:
+      - DATABASE_URL=sqlite:////data/uptime_monitor.db
+    volumes:
+      - db-data:/data
     ports:
       - "8000:8000"
     depends_on:
       - prometheus
+      - web
     restart: unless-stopped
 
   prometheus:
@@ -39,3 +58,6 @@ services:
     depends_on:
       - prometheus
     restart: unless-stopped
+
+volumes:
+  db-data:
