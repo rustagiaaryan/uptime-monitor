@@ -6,7 +6,7 @@ import requests
 from prometheus_client import start_http_server
 
 from app.config import CHECK_INTERVAL_SECONDS
-from app.metrics import set_website_up, observe_response_time
+from app.metrics import set_website_up, observe_response_time, remove_url_metrics
 from app.database import SessionLocal, init_db
 from app.models import MonitoredURL, User
 
@@ -40,9 +40,21 @@ def main():
 
     logger.info(f"Starting URL monitoring with {CHECK_INTERVAL_SECONDS}s interval")
 
+    # Track URLs from previous iteration to detect removals
+    previous_urls = set()
+
     while True:
         # Fetch active URLs from database on each iteration
         urls_to_monitor = get_active_urls()
+        current_urls = set(urls_to_monitor)
+
+        # Detect removed URLs and clean up their metrics
+        removed_urls = previous_urls - current_urls
+        for url, user_id, username in removed_urls:
+            logger.info(f"Removing metrics for [{username}] {url}")
+            remove_url_metrics(url, user_id, username)
+
+        previous_urls = current_urls
 
         if not urls_to_monitor:
             logger.info("No active URLs to monitor")

@@ -12,3 +12,16 @@ def set_website_up(url: str, up: bool, user_id: int, username: str) -> None:
 
 def observe_response_time(url: str, seconds: float, user_id: int, username: str) -> None:
     website_response_time_seconds.labels(url=url, user_id=str(user_id), username=username).observe(seconds)
+
+
+def remove_url_metrics(url: str, user_id: int, username: str) -> None:
+    """Remove metrics for a URL by clearing its labels from the collectors"""
+    try:
+        website_up.remove(url, str(user_id), username)
+    except KeyError:
+        pass  # Metric doesn't exist, ignore
+
+    try:
+        website_response_time_seconds.remove(url, str(user_id), username)
+    except KeyError:
+        pass  # Metric doesn't exist, ignore
