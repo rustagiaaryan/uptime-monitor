@@ -29,9 +29,17 @@ docker-compose up --build
 
 Access the services:
 
-- Grafana: http://localhost:3000
+- Grafana: http://localhost:3000 (login: admin/admin)
 - Prometheus: http://localhost:9090
 - Monitor Metrics: http://localhost:8000/metrics
+
+## Grafana Dashboard
+
+The uptime monitoring dashboard is automatically provisioned on startup. After logging into Grafana with the default credentials (admin/admin), you can find the "Website Uptime Monitor" dashboard in the dashboard list.
+
+The dashboard displays:
+- Real-time uptime status for all monitored URLs
+- Historical uptime trends
 
 ## Configuration
 
