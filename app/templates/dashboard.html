@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Uptime Monitor{% endblock %}
+
+{% block content %}
+<h2>Your Monitored URLs</h2>
+
+<div class="card" style="margin-top: 20px;">
+    {% if urls %}
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="border-bottom: 2px solid #ddd;">
+                    <th style="padding: 10px; text-align: left;">URL</th>
+                    <th style="padding: 10px; text-align: left;">Added</th>
+                    <th style="padding: 10px; text-align: left;">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for url in urls %}
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 10px;">{{ url.url }}</td>
+                    <td style="padding: 10px;">{{ url.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td style="padding: 10px;">
+                        <span style="color: #27ae60;">Active</span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p style="text-align: center; color: #7f8c8d; padding: 40px;">
+            No URLs being monitored yet. Add one to get started!
+        </p>
+    {% endif %}
+</div>
+
+<p class="text-center mt-20" style="color: #7f8c8d;">
+    URL management coming in next step...
+</p>
+{% endblock %}

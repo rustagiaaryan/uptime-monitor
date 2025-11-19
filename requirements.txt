@@ -3,3 +3,4 @@ prometheus-client
 requests
 sqlalchemy
 passlib[bcrypt]
+flask
