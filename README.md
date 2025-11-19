@@ -114,14 +114,6 @@ The application uses SQLite by default, stored in a Docker volume. To use a diff
 - Update `DATABASE_URL` environment variable in `docker-compose.yml`
 - Supported: PostgreSQL, MySQL, or any SQLAlchemy-compatible database
 
-### Security
-
-For production deployment:
-- Change `SECRET_KEY` in docker-compose.yml web service
-- Change Grafana admin password
-- Use HTTPS/SSL termination
-- Consider using PostgreSQL instead of SQLite
-
 ## Metrics
 
 All metrics include labels: `url`, `user_id`, `username`
@@ -129,55 +121,17 @@ All metrics include labels: `url`, `user_id`, `username`
 - `website_up`: Gauge indicating if a website is up (1) or down (0)
 - `website_response_time_seconds`: Histogram of response times in seconds
 
-## Project Structure
+## Screenshots
 
-```
-uptime-monitor/
-├── app/
-│   ├── __init__.py
-│   ├── auth.py              # Password hashing utilities
-│   ├── config.py            # Configuration settings
-│   ├── database.py          # Database setup and session management
-│   ├── metrics.py           # Prometheus metrics definitions
-│   ├── models.py            # SQLAlchemy models (User, MonitoredURL)
-│   ├── monitor.py           # Background monitoring service
-│   ├── web.py               # Flask web application
-│   └── templates/           # HTML templates
-│       ├── base.html
-│       ├── login.html
-│       ├── register.html
-│       └── dashboard.html
-├── grafana/
-│   ├── dashboards/
-│   │   └── uptime-dashboard.json
-│   └── provisioning/
-│       ├── datasources/
-│       │   └── prometheus.yml
-│       └── dashboards/
-│           └── dashboards.yml
-├── prometheus/
-│   └── prometheus.yml
-├── Dockerfile               # Monitor service Dockerfile
-├── Dockerfile.web          # Web UI Dockerfile
-├── docker-compose.yml
-├── requirements.txt
-└── README.md
-```
+### Web Dashboard
+The web interface allows users to add and manage URLs to monitor:
 
-## Development
+![Dashboard](screenshots/dashboard.png)
 
-To run services individually for development:
+### Grafana Metrics Visualization
+Real-time monitoring data displayed in Grafana with customizable filters:
 
-```bash
-# Install dependencies
-pip install -r requirements.txt
-
-# Run web UI
-python -m app.web
-
-# Run monitor (in separate terminal)
-python -m app.monitor
-```
+![Grafana Dashboard](screenshots/grafana.png)
 
 ## Troubleshooting
 
@@ -194,3 +148,31 @@ python -m app.monitor
 - Check monitor service logs: `docker logs uptime-monitor-app`
 - Verify URLs are marked as active in the dashboard
 - Ensure URLs start with http:// or https://
+
+## What I Learned
+
+This project was a hands-on learning experience to understand observability and monitoring systems. The main goal was to learn how Prometheus and Grafana work together to collect and visualize metrics in a production-like environment.
+
+### Key Takeaways
+
+**Prometheus Metrics:** I learned how to expose custom metrics using the Prometheus client library and how to structure metrics with labels for multi-dimensional data. Understanding the difference between Gauges and Histograms was crucial for tracking both uptime status and response times effectively.
+
+**Grafana Dashboards:** Working with Grafana taught me how to write PromQL queries to visualize time-series data. I learned how to create dashboard variables for filtering and how to provision dashboards automatically through configuration files instead of manual setup.
+
+**Docker Compose Orchestration:** Managing multiple services (web app, monitoring service, Prometheus, Grafana) with Docker Compose showed me how to handle service dependencies, shared volumes for persistent data, and inter-container networking. The challenge of making services communicate properly (like Prometheus scraping metrics from the monitor) was a good lesson in container networking.
+
+**Database Session Management:** I ran into SQLAlchemy DetachedInstanceError issues when trying to access database objects after closing sessions. This taught me the importance of proper session management and extracting data before closing database connections.
+
+**Real-time Metric Cleanup:** One interesting challenge was making metrics disappear from Grafana immediately when URLs were removed. I learned that Prometheus doesn't automatically clean up old metrics, so I had to implement tracking of active URLs and explicitly remove metric labels when URLs were deactivated.
+
+### Challenges Faced
+
+The biggest challenge was understanding why metrics weren't updating in real-time when I expected them to. Debugging the metric cleanup required understanding how Prometheus stores time series data and how to properly remove them from the collectors.
+
+Another challenge was getting the Grafana dashboard to auto-provision correctly with the right datasource configuration. It took some trial and error to understand the provisioning directory structure and YAML format.
+
+### Future Improvements
+
+If I were to extend this project, I would add email or Slack notifications when sites go down, implement historical uptime percentage calculations, and maybe add a status page that users could share publicly. It would also be interesting to add more advanced features like custom alert thresholds or integrating with external monitoring services.
+
+Overall, this project gave me practical experience with monitoring infrastructure that's commonly used in production environments, which will be valuable for understanding how companies track the health of their systems.

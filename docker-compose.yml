@@ -10,7 +10,7 @@ services:
     container_name: uptime-monitor-web
     environment:
       - DATABASE_URL=sqlite:////data/uptime_monitor.db
-      - SECRET_KEY=change-this-in-production
+      - SECRET_KEY=5298c840c107b7882dc4d6d9c8f2760d8b37eb81c34e3ff701d93d5004bf769c
     volumes:
       - db-data:/data
     ports:
