@@ -1,3 +1,5 @@
 # FILE: requirements.txt
 prometheus-client
 requests
+sqlalchemy
+passlib[bcrypt]
