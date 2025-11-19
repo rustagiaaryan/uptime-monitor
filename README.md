@@ -1,5 +1,3 @@
-# FILE: README.md
-
 # Website Uptime Monitor
 
 A production-style multi-user website uptime monitoring system with a web interface for managing URLs, Prometheus for metrics collection, and Grafana for visualization.
