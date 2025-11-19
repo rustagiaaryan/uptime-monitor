@@ -39,7 +39,7 @@ docker-compose up --build
 ```
 
 This will start four services:
-- **Web UI** (port 5000): User registration, login, and URL management
+- **Web UI** (port 5001): User registration, login, and URL management
 - **Monitor** (port 8000): Background service that checks URLs and exposes metrics
 - **Prometheus** (port 9090): Metrics collection and storage
 - **Grafana** (port 3000): Metrics visualization
@@ -48,7 +48,7 @@ This will start four services:
 
 ### 1. Create an Account
 
-1. Navigate to http://localhost:5000
+1. Navigate to http://localhost:5001
 2. Click "Register here" to create a new account
 3. Enter username, email, and password
 4. You'll be automatically logged in after registration
@@ -77,7 +77,7 @@ From your dashboard, click "Remove" next to any URL to stop monitoring it. Histo
 
 ## Access Points
 
-- **Web UI**: http://localhost:5000 (create account to get started)
+- **Web UI**: http://localhost:5001 (create account to get started)
 - **Grafana**: http://localhost:3000 (login: admin/admin)
 - **Prometheus**: http://localhost:9090
 - **Monitor Metrics**: http://localhost:8000/metrics
