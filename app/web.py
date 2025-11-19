@@ -175,12 +175,15 @@ def remove_url(url_id):
         db.close()
         return redirect(url_for("dashboard"))
 
+    # Store the URL before closing the session
+    url_to_remove = monitored_url.url
+
     # Mark as inactive instead of deleting (preserves historical data)
     monitored_url.is_active = False
     db.commit()
     db.close()
 
-    flash(f"Stopped monitoring {monitored_url.url}", "success")
+    flash(f"Stopped monitoring {url_to_remove}", "success")
     return redirect(url_for("dashboard"))
 
 

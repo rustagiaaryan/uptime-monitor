@@ -2,5 +2,5 @@
 prometheus-client
 requests
 sqlalchemy
-passlib[bcrypt]
+bcrypt
 flask
