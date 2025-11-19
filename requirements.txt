@@ -1,0 +1,3 @@
+# FILE: requirements.txt
+prometheus-client
+requests
